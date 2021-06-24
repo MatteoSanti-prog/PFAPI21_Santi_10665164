@@ -124,6 +124,7 @@ int nodeWithMinimumDistance(int distances[], int d){
 int graphCost(int* matrix, int d){
 
     //initialization part
+    int sum=0;//sum of all minimum paths
     int chosen;//chosen node
     int j;//generic node
     int totalDistance;//total distance between a generic node and node 0
@@ -147,11 +148,26 @@ int graphCost(int* matrix, int d){
             break;
         }
         for(j=0;j<d;j++){//here we are considering each element of the matrix's row associated to the chosen node
-            if(matrix[d*chosen+j]!=0){
-                //toDo update distances
+            if(matrix[d*chosen+j]!=0){//here i consider only the node that are reachable from the chosen node
+                totalDistance=distances[chosen]+matrix[d*chosen+j];//here i update the distance between the initial node and a generic node neighbour j
+                if(totalDistance<distances[j]){//here i update the distance only if it is better than the previous one
+                    distances[j]=totalDistance;
+                    predecessors[j]=chosen;
+                }
             }
         }
     }
+    //
+    //this part returns the sum of all minimum distances
+    for(j=0;j<d;j++){
+        if(distances[j]==CONST){
+            sum+=0;
+        }
+        else{
+            sum+=distances[j];
+        }
+    }
+    return sum;
     //
 }
 
