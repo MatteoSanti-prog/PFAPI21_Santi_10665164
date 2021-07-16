@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define CONST 10000000
+#define CONST 1000000000
 
 //structure of a graph
 typedef struct {
@@ -111,13 +111,15 @@ void deleteNode(List *list, int node){
 //this function finds the node with minimum distance from node 0
 int nodeWithMinimumDistance(int distances[], int d){
     int i;
-    int temp=CONST;
+    int min=CONST;
+    int node=0;
     for(i=0;i<d;i++){
-        if(distances[i]<temp){
-            temp=distances[i];
+        if(distances[i]<min){
+            min=distances[i];
+            node=i;
         }
     }
-    return temp;
+    return node;
 }
 
 //this function returns the sum of all minimum paths and it implements Dijkstra's algorithm
@@ -128,8 +130,8 @@ int graphCost(int* matrix, int d){
     int chosen;//chosen node
     int j;//generic node
     int totalDistance;//total distance between a generic node and node 0
-    int distances[d];//array that constantly saves the minimum distances of nodes from node 0
-    int predecessors[d];//array of nodes (a generic predecessors[d] is the previous node of node d in the minimum path from node 0)
+    int* distances=malloc(d*sizeof(int));//array that constantly saves the minimum distances of nodes from node 0
+    int* predecessors=malloc(d*sizeof(int));//array of nodes (a generic predecessors[d] is the previous node of node d in the minimum path from node 0)
     List listOfNodes;//list of all nodes in the graph
     initializeList(&listOfNodes);
     for(j=0;j<d;j++){
@@ -139,14 +141,10 @@ int graphCost(int* matrix, int d){
     }
     distances[0]=0;
     predecessors[0]=0;
-    //
     //main part of the algorithm
     while(listOfNodes!=NULL){
         chosen=nodeWithMinimumDistance(distances,d);//node with minimum distance from node 0
         deleteNode(&listOfNodes, chosen);
-        if(chosen==CONST){//other nodes will have infinite distances too
-            break;
-        }
         for(j=0;j<d;j++){//here we are considering each element of the matrix's row associated to the chosen node
             if(matrix[d*chosen+j]!=0){//here i consider only the node that are reachable from the chosen node
                 totalDistance=distances[chosen]+matrix[d*chosen+j];//here i update the distance between the initial node and a generic node neighbour j
@@ -156,6 +154,7 @@ int graphCost(int* matrix, int d){
                 }
             }
         }
+        distances[chosen]=CONST;
     }
     //
     //this part returns the sum of all minimum distances
@@ -167,8 +166,9 @@ int graphCost(int* matrix, int d){
             sum+=distances[j];
         }
     }
+    free(distances);
+    free(predecessors);
     return sum;
-    //
 }
 
 //this function displays the current ranking
@@ -207,7 +207,7 @@ int main() {
             printf("Write matrix of the graph:\n");
             initializeMatrix(matrix, d);//initialization of the matrix
             //here there will be a function in order to calculate the sum of minimum paths
-            insertInOrder(&ranking,counter,graphCost(&matrix, d));
+            insertInOrder(&ranking,counter,graphCost(matrix, d));
             counter++;
         }
         else if(strcmp(command,"TopK")==0){
