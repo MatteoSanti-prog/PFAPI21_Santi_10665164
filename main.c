@@ -61,18 +61,18 @@ void insertInOrder(Pointer *ranking, int order, int path){
     currentPunt=*ranking;
     while(currentPunt!=NULL && path>currentPunt->path){
         previousPunt=currentPunt;
-        currentPunt=currentPunt->next;
+        currentPunt=(Matrix*)currentPunt->next;
     }
     while(currentPunt!=NULL && path==currentPunt->path && order>currentPunt->order){
         previousPunt=currentPunt;
-        currentPunt=currentPunt->next;
+        currentPunt=(Matrix*)currentPunt->next;
     }
     punt=malloc(sizeof(Matrix));
     punt->path=path;
-    punt->next=currentPunt;
+    punt->next= (struct Matrix *) currentPunt;
     punt->order=order;
     if(previousPunt!=NULL){
-        previousPunt->next=punt;
+        previousPunt->next= (struct Matrix *) punt;
     }
     else{
         *ranking=punt;
@@ -89,7 +89,7 @@ void insertNode(List *list, int node){
         *list=punt;
     }
     else{
-        insertNode(&((*list)->next), node);
+        insertNode((List *) &((*list)->next), node);
     }
 }
 
@@ -103,7 +103,7 @@ void deleteNode(List *list, int node){
             free(punt);
         }
         else{
-            deleteNode(&((*list)->next), node);
+            deleteNode((List *) &((*list)->next), node);
         }
     }
 }
@@ -207,7 +207,7 @@ int main() {
     int* matrix;//use malloc in order to initialize the matrix because i don't know its dimension at compile time
     Pointer ranking;//ranking ordered by minimum path
     initializeRanking(&ranking);
-    printf("Insert d and k values:\n");
+    //printf("Insert d and k values:\n");
     scanf("%d %d", &d, &k);
     //debugging part below
     /*
