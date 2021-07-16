@@ -122,6 +122,15 @@ int nodeWithMinimumDistance(int *distances, int d, int *boolean){
     boolean[node]=1;
     return node;
 }
+//this function checks if the remaining nodes in the graph have infinite distance from node 0
+int infiniteNode(int *distances, int *boolean, int d){
+    for(int i=0;i<d;i++){
+        if(boolean[i]==0 && distances[i]<CONST){
+            return 0;
+        }
+    }
+    return 1;
+}
 
 //this function returns the sum of all minimum paths and it implements Dijkstra's algorithm
 int graphCost(int* matrix, int d){
@@ -146,7 +155,7 @@ int graphCost(int* matrix, int d){
     predecessors[0]=0;
     boolean[0]=0;
     //main part of the algorithm
-    while(listOfNodes!=NULL){
+    while(listOfNodes!=NULL && infiniteNode(distances,boolean,d)==0){
         chosen=nodeWithMinimumDistance(distances,d,boolean);//node with minimum distance from node 0
         deleteNode(&listOfNodes, chosen);
         for(j=1;j<d;j++){//here we are considering each element of the matrix's row associated to the chosen node starting from 1 because we don't care about node 0
@@ -172,7 +181,8 @@ int graphCost(int* matrix, int d){
     free(distances);
     free(predecessors);
     free(boolean);
-    printf("Somma percorsi minimi e: %d\n", sum);
+    free(listOfNodes);
+    //printf("Somma percorsi minimi e: %d\n", sum);
     return sum;
 }
 
@@ -205,11 +215,11 @@ int main() {
     printf("Size of variable k is: %d bytes\n", sizeof(k));
     printf("%d %d\n", d, k);
      */
-    printf("Insert a specific command:\n");
+    //printf("Insert a specific command:\n");
     while(scanf("%s", command)!=EOF){
         matrix=malloc((d*d)*sizeof(int));
         if(strcmp(command,"AggiungiGrafo")==0){
-            printf("Write matrix of the graph:\n");
+            //printf("Write matrix of the graph:\n");
             initializeMatrix(matrix, d);//initialization of the matrix
             //here there will be a function in order to calculate the sum of minimum paths
             insertInOrder(&ranking,counter,graphCost(matrix, d));
@@ -217,11 +227,12 @@ int main() {
         }
         else if(strcmp(command,"TopK")==0){
             //get ranking
-            printf("Here there's the top k ranking\n");
+            //printf("Here there's the top k ranking\n");
             printRanking(&ranking, k);
         }
-        printf("Insert a specific command:\n");
+        //printf("Insert a specific command:\n");
     }
     free(matrix);
+    free(ranking);
     return 0;
 }
