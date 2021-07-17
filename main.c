@@ -26,9 +26,13 @@ void initializeMatrix(int * matrix, int d){
     int count1, count2;//counters used in cycle for
     for(count1=0;count1<d;count1++){
         for(count2=0;count2<d-1;count2++){
-            scanf("%d,", &matrix[count2+(count1*d)]);
+            if(scanf("%d,", &matrix[count2+(count1*d)])==EOF){
+                exit(1);
+            }
         }
-        scanf("%d", &matrix[count2+(count1*d)]);
+        if(scanf("%d", &matrix[count2+(count1*d)])==EOF){
+            exit(1);
+        }
     }
     //debugging part below
     /*
@@ -99,7 +103,7 @@ void deleteNode(List *list, int node){
     if(*list!=NULL){
         if((*list)->node==node){
             punt=*list;
-            *list=(*list)->next;
+            *list= (List) (*list)->next;
             free(punt);
         }
         else{
@@ -193,7 +197,7 @@ void printRanking(Pointer *ranking, int k){
         Matrix* punt=*ranking;
         while(punt!=NULL && counter<k){
             printf("%d ", punt->order);
-            punt=punt->next;
+            punt=(Matrix *)punt->next;
             counter++;
         }
         printf("\n");
@@ -208,7 +212,9 @@ int main() {
     Pointer ranking;//ranking ordered by minimum path
     initializeRanking(&ranking);
     //printf("Insert d and k values:\n");
-    scanf("%d %d", &d, &k);
+    if(scanf("%d %d", &d, &k)==EOF){
+        exit(1);
+    }
     //debugging part below
     /*
     printf("Size of variable d is: %d bytes\n", sizeof(d));
