@@ -13,13 +13,14 @@ typedef struct {
 //pointer to an element of the list
 typedef Matrix *Pointer;
 
-//list of nodes in a graph
+/*list of nodes in a graph
 typedef struct{
     unsigned int node;
     struct listOfNodes *next;
 }listOfNodes;
 
 typedef listOfNodes *List;
+ */
 
 //this function initializes matrix: its parameters are the returned matrix and its dimension
 void initializeMatrix(int * matrix, int d){
@@ -34,16 +35,6 @@ void initializeMatrix(int * matrix, int d){
             exit(1);
         }
     }
-    //debugging part below
-    /*
-    printf("Here there's the representation of your matrix:\n");
-    for(count1=0;count1<d;count1++){
-        for(count2=0;count2<d-1;count2++){
-            printf("%d,", matrix[count2+(count1*d)]);
-        }
-        printf("%d\n", matrix[count2+(count1*d)]);
-    }
-     */
 }
 
 
@@ -53,10 +44,11 @@ void initializeRanking(Pointer *ranking){
 }
 
 //this function initializes the list of nodes in the graph
+/*
 void initializeList(List *list){
     *list=NULL;
 }
-
+*/
 
 //this function inserts a new graph in base of its minimum path's length
 void insertInOrder(Pointer *ranking, int order, int path){
@@ -84,6 +76,7 @@ void insertInOrder(Pointer *ranking, int order, int path){
 }
 
 //this function insert a node of the graph in the specified list
+/*
 void insertNode(List *list, int node){
     listOfNodes *punt;
     if(*list==NULL){
@@ -96,8 +89,10 @@ void insertNode(List *list, int node){
         insertNode((List *) &((*list)->next), node);
     }
 }
+*/
 
 //this function delete a node from the specified list
+/*
 void deleteNode(List *list, int node){
     listOfNodes *punt;
     if(*list!=NULL){
@@ -111,6 +106,7 @@ void deleteNode(List *list, int node){
         }
     }
 }
+ */
 
 //this function finds the node with minimum distance from node 0
 int nodeWithMinimumDistance(int *distances, int d, int *boolean){
@@ -147,21 +143,24 @@ int graphCost(int* matrix, int d){
     int* distances=malloc(d*sizeof(int));//array that constantly saves the minimum distances of nodes from node 0
     int* predecessors=malloc(d*sizeof(int));//array of nodes (a generic predecessors[d] is the previous node of node d in the minimum path from node 0)
     int* boolean=malloc(d*sizeof(int));//boolean in order to check which node has not been considered yet (0=false, 1=true)
-    List listOfNodes;//list of all nodes in the graph
-    initializeList(&listOfNodes);
+    //List listOfNodes;//list of all nodes in the graph
+    //initializeList(&listOfNodes);
     for(j=1;j<d;j++){
         predecessors[j]=0;
         distances[j]=CONST;
         boolean[j]=0;
-        insertNode(&listOfNodes,j);
+        //insertNode(&listOfNodes,j);
     }
     distances[0]=0;
     predecessors[0]=0;
     boolean[0]=0;
     //main part of the algorithm
-    while(listOfNodes!=NULL && infiniteNode(distances,boolean,d)==0){
+    while(infiniteNode(distances,boolean,d)==0){
         chosen=nodeWithMinimumDistance(distances,d,boolean);//node with minimum distance from node 0
-        deleteNode(&listOfNodes, chosen);
+        //deleteNode(&listOfNodes, chosen);
+        if(distances[chosen]==CONST){
+            break;
+        }
         for(j=1;j<d;j++){//here we are considering each element of the matrix's row associated to the chosen node starting from 1 because we don't care about node 0
             if(matrix[d*chosen+j]!=0 && chosen!=j){//here i consider only the node that are reachable from the chosen node
                 totalDistance=distances[chosen]+matrix[d*chosen+j];//here i update the distance between the initial node and a generic node neighbour j
@@ -183,9 +182,9 @@ int graphCost(int* matrix, int d){
         }
     }
     free(distances);
-    free(predecessors);
     free(boolean);
-    free(listOfNodes);
+    free(predecessors);
+    //free(listOfNodes);
     //printf("Somma percorsi minimi e: %d\n", sum);
     return sum;
 }
@@ -215,6 +214,7 @@ int main() {
     if(scanf("%d %d", &d, &k)==EOF){
         exit(1);
     }
+    matrix=malloc((d*d)*sizeof(int));
     //debugging part below
     /*
     printf("Size of variable d is: %d bytes\n", sizeof(d));
@@ -223,7 +223,6 @@ int main() {
      */
     //printf("Insert a specific command:\n");
     while(scanf("%s", command)!=EOF){
-        matrix=malloc((d*d)*sizeof(int));
         if(strcmp(command,"AggiungiGrafo")==0){
             //printf("Write matrix of the graph:\n");
             initializeMatrix(matrix, d);//initialization of the matrix
