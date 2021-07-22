@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define CONST 4294967295
+#define CONST 2147483647
 //structure of a graph
 typedef struct {
     unsigned int order;//it represents the number of 'arrival' of the graph
@@ -92,15 +92,12 @@ int graphCost(int* matrix, int d){
     int j;//generic node
     int totalDistance;//total distance between a generic node and node 0
     int* distances=malloc(d*sizeof(int));//array that constantly saves the minimum distances of nodes from node 0
-    //int* predecessors=malloc(d*sizeof(int));//array of nodes (a generic predecessors[d] is the previous node of node d in the minimum path from node 0)
     int* boolean=malloc(d*sizeof(int));//boolean in order to check which node has not been considered yet (0=false, 1=true)
     for(j=1;j<d;j++){
-        //predecessors[j]=0;
         distances[j]=CONST;
         boolean[j]=0;
     }
     distances[0]=0;
-    //predecessors[0]=0;
     boolean[0]=0;
     //main part of the algorithm
     while(infiniteNode(distances,boolean,d)==0){
@@ -113,7 +110,6 @@ int graphCost(int* matrix, int d){
                 totalDistance=distances[chosen]+matrix[d*chosen+j];//here i update the distance between the initial node and a generic node neighbour j
                 if(totalDistance<distances[j]){//here i update the distance only if it is better than the previous one
                     distances[j]=totalDistance;
-                    //predecessors[j]=chosen;
                 }
             }
         }
