@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define CONST 1000000000
-
+#define CONST 4294967295
 //structure of a graph
 typedef struct {
     unsigned int order;//it represents the number of 'arrival' of the graph
@@ -12,15 +11,6 @@ typedef struct {
 
 //pointer to an element of the list
 typedef Matrix *Pointer;
-
-/*list of nodes in a graph
-typedef struct{
-    unsigned int node;
-    struct listOfNodes *next;
-}listOfNodes;
-
-typedef listOfNodes *List;
- */
 
 //this function initializes matrix: its parameters are the returned matrix and its dimension
 void initializeMatrix(int * matrix, int d){
@@ -42,13 +32,6 @@ void initializeMatrix(int * matrix, int d){
 void initializeRanking(Pointer *ranking){
     *ranking=NULL;
 }
-
-//this function initializes the list of nodes in the graph
-/*
-void initializeList(List *list){
-    *list=NULL;
-}
-*/
 
 //this function inserts a new graph in base of its minimum path's length
 void insertInOrder(Pointer *ranking, int order, int path){
@@ -75,38 +58,6 @@ void insertInOrder(Pointer *ranking, int order, int path){
     }
 }
 
-//this function insert a node of the graph in the specified list
-/*
-void insertNode(List *list, int node){
-    listOfNodes *punt;
-    if(*list==NULL){
-        punt=malloc(sizeof(listOfNodes));
-        punt->next=NULL;
-        punt->node=node;
-        *list=punt;
-    }
-    else{
-        insertNode((List *) &((*list)->next), node);
-    }
-}
-*/
-
-//this function delete a node from the specified list
-/*
-void deleteNode(List *list, int node){
-    listOfNodes *punt;
-    if(*list!=NULL){
-        if((*list)->node==node){
-            punt=*list;
-            *list= (List) (*list)->next;
-            free(punt);
-        }
-        else{
-            deleteNode((List *) &((*list)->next), node);
-        }
-    }
-}
- */
 
 //this function finds the node with minimum distance from node 0
 int nodeWithMinimumDistance(int *distances, int d, int *boolean){
@@ -125,7 +76,7 @@ int nodeWithMinimumDistance(int *distances, int d, int *boolean){
 //this function checks if the remaining nodes in the graph have infinite distance from node 0
 int infiniteNode(int *distances, int *boolean, int d){
     for(int i=0;i<d;i++){
-        if(boolean[i]==0 && distances[i]<CONST){
+        if(boolean[i]==0 && distances[i]!=CONST){
             return 0;
         }
     }
@@ -141,23 +92,19 @@ int graphCost(int* matrix, int d){
     int j;//generic node
     int totalDistance;//total distance between a generic node and node 0
     int* distances=malloc(d*sizeof(int));//array that constantly saves the minimum distances of nodes from node 0
-    int* predecessors=malloc(d*sizeof(int));//array of nodes (a generic predecessors[d] is the previous node of node d in the minimum path from node 0)
+    //int* predecessors=malloc(d*sizeof(int));//array of nodes (a generic predecessors[d] is the previous node of node d in the minimum path from node 0)
     int* boolean=malloc(d*sizeof(int));//boolean in order to check which node has not been considered yet (0=false, 1=true)
-    //List listOfNodes;//list of all nodes in the graph
-    //initializeList(&listOfNodes);
     for(j=1;j<d;j++){
-        predecessors[j]=0;
+        //predecessors[j]=0;
         distances[j]=CONST;
         boolean[j]=0;
-        //insertNode(&listOfNodes,j);
     }
     distances[0]=0;
-    predecessors[0]=0;
+    //predecessors[0]=0;
     boolean[0]=0;
     //main part of the algorithm
     while(infiniteNode(distances,boolean,d)==0){
         chosen=nodeWithMinimumDistance(distances,d,boolean);//node with minimum distance from node 0
-        //deleteNode(&listOfNodes, chosen);
         if(distances[chosen]==CONST){
             break;
         }
@@ -166,7 +113,7 @@ int graphCost(int* matrix, int d){
                 totalDistance=distances[chosen]+matrix[d*chosen+j];//here i update the distance between the initial node and a generic node neighbour j
                 if(totalDistance<distances[j]){//here i update the distance only if it is better than the previous one
                     distances[j]=totalDistance;
-                    predecessors[j]=chosen;
+                    //predecessors[j]=chosen;
                 }
             }
         }
@@ -181,10 +128,9 @@ int graphCost(int* matrix, int d){
             sum+=distances[j];
         }
     }
-    free(distances);
-    free(boolean);
-    free(predecessors);
-    //free(listOfNodes);
+    //free(distances);
+    //free(boolean);
+    //free(predecessors);
     //printf("Somma percorsi minimi e: %d\n", sum);
     return sum;
 }
@@ -194,10 +140,15 @@ void printRanking(Pointer *ranking, int k){
     if(ranking!=NULL){
         int counter=0;
         Matrix* punt=*ranking;
-        while(punt!=NULL && counter<k){
-            printf("%d ", punt->order);
+        if(punt!=NULL && counter<k){
+            printf("%d", punt->order);
             punt=(Matrix *)punt->next;
             counter++;
+            while(punt!=NULL && counter<k){
+                printf(" %d", punt->order);
+                punt=(Matrix *)punt->next;
+                counter++;
+            }
         }
         printf("\n");
     }
@@ -215,20 +166,15 @@ int main() {
         exit(1);
     }
     matrix=malloc((d*d)*sizeof(int));
-    //debugging part below
-    /*
-    printf("Size of variable d is: %d bytes\n", sizeof(d));
-    printf("Size of variable k is: %d bytes\n", sizeof(k));
-    printf("%d %d\n", d, k);
-     */
-    //printf("Insert a specific command:\n");
     while(scanf("%s", command)!=EOF){
         if(strcmp(command,"AggiungiGrafo")==0){
-            //printf("Write matrix of the graph:\n");
-            initializeMatrix(matrix, d);//initialization of the matrix
-            //here there will be a function in order to calculate the sum of minimum paths
-            insertInOrder(&ranking,counter,graphCost(matrix, d));
-            counter++;
+            if(d!=0) {
+                //printf("Write matrix of the graph:\n");
+                initializeMatrix(matrix, d);//initialization of the matrix
+                //here there will be a function in order to calculate the sum of minimum paths
+                insertInOrder(&ranking, counter, graphCost(matrix, d));
+                counter++;
+            }
         }
         else if(strcmp(command,"TopK")==0){
             //get ranking
@@ -237,7 +183,7 @@ int main() {
         }
         //printf("Insert a specific command:\n");
     }
-    free(matrix);
-    free(ranking);
+    //free(matrix);
+    //free(ranking);
     return 0;
 }
