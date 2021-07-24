@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define CONST 4294967295
+#define CONST 114294967295
 //structure of a graph
 typedef struct {
     unsigned int order;//it represents the number of 'arrival' of the graph
@@ -13,7 +13,7 @@ typedef struct {
 typedef Matrix *Pointer;
 
 //this function initializes matrix: its parameters are the returned matrix and its dimension
-void initializeMatrix(unsigned int * matrix, int d){
+void initializeMatrix(unsigned int * matrix, unsigned int d){
     int count1, count2;//counters used in cycle for
     for(count1=0;count1<d;count1++){
         for(count2=0;count2<d-1;count2++){
@@ -34,7 +34,7 @@ void initializeRanking(Pointer *ranking){
 }
 
 //this function inserts a new graph in base of its minimum path's length
-void insertInOrder(Pointer *ranking, int order, unsigned long long int path){
+void insertInOrder(Pointer *ranking, unsigned int order, unsigned long long int path){
     Matrix *punt, *currentPunt, *previousPunt;
     previousPunt=NULL;
     currentPunt=*ranking;
@@ -60,7 +60,7 @@ void insertInOrder(Pointer *ranking, int order, unsigned long long int path){
 
 
 //this function finds the node with minimum distance from node 0
-unsigned long long int nodeWithMinimumDistance(unsigned /*long long*/ const int *distances, int d, const int *boolean){
+unsigned int nodeWithMinimumDistance(unsigned long long const int *distances, unsigned int d, const int *boolean){
     int i;
     unsigned long long int min=CONST;
     int node=0;
@@ -73,7 +73,7 @@ unsigned long long int nodeWithMinimumDistance(unsigned /*long long*/ const int 
     return node;
 }
 //this function checks if the remaining nodes in the graph have infinite distance from node 0
-int emptyList(const int *boolean, int d){
+int emptyList(const int *boolean, unsigned int d){
     for(int i=0;i<d;i++){
         if(boolean[i]==0 /*&& distances[i]<CONST*/){
             return 0;
@@ -83,12 +83,12 @@ int emptyList(const int *boolean, int d){
 }
 
 //this function returns the sum of all minimum paths and it implements Dijkstra's algorithm
-unsigned /*long long*/ int graphCost(unsigned const int* matrix, int d,unsigned /*long long*/ int* distances,int* boolean){
+unsigned long long int graphCost(unsigned const int* matrix, unsigned int d,unsigned long long int* distances,int* boolean){
     //initialization part
-    unsigned /*long long*/ int sum=0;//sum of all minimum paths
-    unsigned /*long long*/ int chosen;//chosen node
+    unsigned long long int sum=0;//sum of all minimum paths
+    unsigned int chosen;//chosen node
     int j;//generic node
-    unsigned /*long long*/ int totalDistance;//total distance between a generic node and node 0
+    unsigned long long int totalDistance;//total distance between a generic node and node 0
 
     for(j=1;j<d;j++){
         distances[j]=CONST;
@@ -130,7 +130,7 @@ unsigned /*long long*/ int graphCost(unsigned const int* matrix, int d,unsigned 
 }
 
 //this function displays the current ranking
-void printRanking(Pointer *ranking, int k){
+void printRanking(Pointer *ranking, unsigned int k){
     if(ranking!=NULL){
         int counter=0;
         Matrix* punt=*ranking;
@@ -149,11 +149,11 @@ void printRanking(Pointer *ranking, int k){
 }
 
 int main() {
-    int counter=0;//number of graphs read before the current one
-    int d, k;//d=number of nodes, k=length of the ranking
+    unsigned int counter=0;//number of graphs read before the current one
+    unsigned int d, k;//d=number of nodes, k=length of the ranking
     char command[15];//array used to store the command
     unsigned int* matrix;//use malloc in order to initialize the matrix because i don't know its dimension at compile time
-    unsigned /*long long*/ int* distances;//array that constantly saves the minimum distances of nodes from node 0
+    unsigned long long int* distances;//array that constantly saves the minimum distances of nodes from node 0
     int* boolean;//boolean in order to check which node has not been considered yet (0=false, 1=true)
     Pointer ranking;//ranking ordered by minimum path
     initializeRanking(&ranking);
@@ -161,8 +161,8 @@ int main() {
     if(scanf("%d %d", &d, &k)==EOF){
         exit(1);
     }
-    matrix=malloc((d*d)*sizeof(int));
-    distances=malloc(sizeof(int)*d);
+    matrix=malloc((d*d)*sizeof(unsigned int));
+    distances=malloc(sizeof(unsigned long long int)*d);
     boolean=malloc(sizeof(int)*d);
     //printf("Insert a specific command:\n");
     while(scanf("%s", command)!=EOF){
