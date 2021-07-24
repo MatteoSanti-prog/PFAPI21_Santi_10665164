@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define CONST 114294967295
+#define INF 1844674400000000000
 //structure of a graph
 typedef struct {
     unsigned int order;//it represents the number of 'arrival' of the graph
@@ -62,7 +62,7 @@ void insertInOrder(Pointer *ranking, unsigned int order, unsigned long long int 
 //this function finds the node with minimum distance from node 0
 unsigned int nodeWithMinimumDistance(unsigned long long const int *distances, unsigned int d, const int *boolean){
     int i;
-    unsigned long long int min=CONST;
+    unsigned long long int min=INF;
     int node=0;
     for(i=0;i<d;i++){
         if (distances[i] <= min && boolean[i] == 0) {
@@ -91,7 +91,7 @@ unsigned long long int graphCost(unsigned const int* matrix, unsigned int d,unsi
     unsigned long long int totalDistance;//total distance between a generic node and node 0
 
     for(j=1;j<d;j++){
-        distances[j]=CONST;
+        distances[j]=INF;
         boolean[j]=0;
     }
     distances[0]=0;
@@ -100,10 +100,10 @@ unsigned long long int graphCost(unsigned const int* matrix, unsigned int d,unsi
     while(emptyList(boolean,d)==0){
         chosen=nodeWithMinimumDistance(distances,d,boolean);//node with minimum distance from node 0
         boolean[chosen]=1;
-        if(distances[chosen]==CONST){
+        if(distances[chosen]==INF){
             break;
         }
-        for(j=1;j<d;j++){//here we are considering each element of the matrix's row associated to the chosen node starting from 1 because we don't care about node 0
+        for(j=0;j<d;j++){//here we are considering each element of the matrix's row associated to the chosen node starting from 1 because we don't care about node 0
             if(matrix[d*chosen+j]!=0 && chosen!=j){//here i consider only the node that are reachable from the chosen node
                 totalDistance=distances[chosen]+matrix[d*chosen+j];//here i update the distance between the initial node and a generic node neighbour j
                 if(totalDistance<distances[j]){//here i update the distance only if it is better than the previous one
@@ -115,7 +115,7 @@ unsigned long long int graphCost(unsigned const int* matrix, unsigned int d,unsi
     //
     //this part returns the sum of all minimum distances
     for(j=1;j<d;j++){
-        if(distances[j]==CONST){
+        if(distances[j]==INF){
             sum+=0;
         }
         else{
@@ -156,11 +156,11 @@ int main() {
     unsigned long long int* distances;//array that constantly saves the minimum distances of nodes from node 0
     int* boolean;//boolean in order to check which node has not been considered yet (0=false, 1=true)
     Pointer ranking;//ranking ordered by minimum path
-    initializeRanking(&ranking);
     //printf("Insert d and k values:\n");
     if(scanf("%d %d", &d, &k)==EOF){
         exit(1);
     }
+    initializeRanking(&ranking);
     matrix=malloc((d*d)*sizeof(unsigned int));
     distances=malloc(sizeof(unsigned long long int)*d);
     boolean=malloc(sizeof(int)*d);
