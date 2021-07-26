@@ -148,6 +148,15 @@ void printRanking(Pointer *ranking, unsigned int k){
     }
 }
 
+void freeMem(Pointer *ranking){
+    Pointer punt;
+    while(*ranking!=NULL){
+        punt=*ranking;
+        *ranking= (Pointer) (*ranking)->next;
+        free(punt);
+    }
+}
+
 int main() {
     unsigned int counter=0;//number of graphs read before the current one
     unsigned int d, k;//d=number of nodes, k=length of the ranking
@@ -182,7 +191,9 @@ int main() {
         }
         //printf("Insert a specific command:\n");
     }
-    //free(matrix);
-    //free(ranking);
+    free(boolean);
+    free(distances);
+    free(matrix);
+    freeMem(&ranking);
     return 0;
 }
