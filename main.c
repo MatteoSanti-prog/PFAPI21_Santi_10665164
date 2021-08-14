@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#define INF 1844674400000000000
+#define INF -1
 //structure of a graph
 typedef struct {
     unsigned int order;//it represents the number of 'arrival' of the graph
@@ -22,7 +22,7 @@ typedef struct{
 typedef Node *PointerNode;
 
 //this function initializes matrix: its parameters are the returned matrix and its dimension
-void initializeMatrix(unsigned int * matrix, unsigned int d){
+void initializeMatrix(unsigned int matrix[], unsigned int d){
     int count1, count2;//counters used in cycle for
     for(count1=0;count1<d;count1++){
         for(count2=0;count2<d-1;count2++){
@@ -113,20 +113,6 @@ int emptyList(PointerNode *listOfNodes){
     }
 }
 
-unsigned long long int checkDistance(PointerNode *listOfNode, unsigned int node){
-    Node *punt;
-    punt=*listOfNode;
-    while(punt!=NULL && punt->node!=node){
-        punt= (Node *) punt->next;
-    }
-    if(punt==NULL){
-        return 0;
-    }
-    else{
-        return punt->distance;
-    }
-}
-
 void deleteNode(PointerNode *listOfNodes, unsigned int node){
     Node *punt;
     if(*listOfNodes!=NULL){
@@ -166,39 +152,36 @@ unsigned int getNode(PointerNode *listOfNodes){
     return (*listOfNodes)->node;
 }
 
-unsigned long long int getDistance(PointerNode *listOfNodes){
-    return (*listOfNodes)->distance;
-}
-
 //this function returns the sum of all minimum paths, and it implements Dijkstra's algorithm
-unsigned long long int graphCost(unsigned const int* matrix, unsigned int d){
-    PointerNode listOfNodes;
-    initializeNode(&listOfNodes);
+unsigned long long int graphCost(unsigned const int matrix[], unsigned int d, PointerNode listOfNodes, unsigned long long int distances[]){
     unsigned int j;//generic node
     unsigned long long int sum=0;
-    unsigned long long int distance;
-    unsigned long long int temp;
     unsigned int chosen;//node with minimum distance
     for(j=0;j<d;j++){
         insertNode(&listOfNodes,d-j-1);
+        if(j==0){
+            distances[j]=0;
+        }
+        else{
+            distances[j]=INF;
+        }
     }
     while(emptyList(&listOfNodes)==0){
         chosen=getNode(&listOfNodes);//node with minimum distance from node 0
-        distance=getDistance(&listOfNodes);
         deleteElement(&listOfNodes);
-        if(distance==INF){
+        if(distances[chosen]==INF){
             sum+=0;
             break;
         }
         else{
-            sum+=distance;
+            sum+=distances[chosen];
         }
         if(emptyList(&listOfNodes)==0){
             for(j=0;j<d;j++){//here we are considering each element of the matrix's row associated to the chosen node starting from 1 because we don't care about node 0
                 if(matrix[d*chosen+j]!=0 && chosen!=j){//here I consider only the node that are reachable from the chosen node
-                    temp=checkDistance(&listOfNodes, j);
-                    if(temp!=0 && distance+matrix[d*chosen+j]<temp){
-                        updateDistance(&listOfNodes, j, distance+matrix[d*chosen+j]);
+                    if(distances[chosen]+matrix[d*chosen+j]<distances[j]){
+                        distances[j]=distances[chosen]+matrix[d*chosen+j];
+                        updateDistance(&listOfNodes, j, distances[chosen]+matrix[d*chosen+j]);
                     }
                 }
             }
@@ -243,33 +226,29 @@ int main() {
     unsigned int counter=0;//number of graphs read before the current one
     unsigned int d, k;//d=number of nodes, k=length of the ranking
     char command[15];//array used to store the command
-    unsigned int* matrix;//use malloc in order to initialize the matrix because i don't know its dimension at compile time
+    //unsigned int* matrix;//use malloc in order to initialize the matrix because i don't know its dimension at compile time
     Pointer ranking;//ranking ordered by minimum path
-    //printf("Insert d and k values:\n");
+    PointerNode listOfNodes;
     if(scanf("%d %d", &d, &k)==EOF){
         exit(1);
     }
+    unsigned int matrix[d*d];
+    unsigned long long int distances[d];
     initializeRanking(&ranking);
-    matrix=malloc((d*d)*sizeof(unsigned int));
-    //printf("Insert a specific command:\n");
+    initializeNode(&listOfNodes);
     while(scanf("%s", command)!=EOF){
         if(strcmp(command,"AggiungiGrafo")==0){
             if(d!=0) {
-                //printf("Write matrix of the graph:\n");
                 initializeMatrix(matrix, d);//initialization of the matrix
-                //here there will be a function in order to calculate the sum of minimum paths
-                insertInOrder(&ranking, counter, graphCost(matrix, d), k);
+                insertInOrder(&ranking, counter, graphCost(matrix, d, listOfNodes, distances), k);
                 counter++;
             }
         }
         else if(strcmp(command,"TopK")==0){
-            //get ranking
-            //printf("Here there's the top k ranking\n");
             printRanking(&ranking, k);
         }
-        //printf("Insert a specific command:\n");
     }
-    //free(matrix);
-    //freeMem(&ranking);
+    freeMem(&ranking);
+    free(listOfNodes);
     return 0;
 }
