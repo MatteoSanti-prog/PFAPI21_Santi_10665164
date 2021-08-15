@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <math.h>
 #define INF -1
 #define CONST 3000
 //structure of a graph
@@ -23,6 +22,7 @@ typedef struct{
 //pointer to an element of the nodeList
 typedef Node *PointerNode;
 
+//this function is a user-defined atoi
 unsigned int conversion(const char string[]){
     unsigned int temp=0;
     for(int i=0;string[i]!='\0';i++){
@@ -31,6 +31,7 @@ unsigned int conversion(const char string[]){
     return temp;
 }
 
+//this function parses strings into integers
 unsigned int parseInt(unsigned int matrix[], const char string[], unsigned int count1, unsigned int d){
     unsigned int allZero=0;
     char temp[10];
@@ -87,7 +88,7 @@ void initializeNode(PointerNode *listOfNodes){
     *listOfNodes=NULL;
 }
 
-
+//this function inserts a new node in the list
 void insertNode(PointerNode *listOfNodes, unsigned int i){
     Node *punt;
     punt=malloc(sizeof(Node));
@@ -226,7 +227,6 @@ unsigned long long int graphCost(unsigned const int matrix[], unsigned int d, Po
     while(emptyList(&listOfNodes)==0){
         deleteElement(&listOfNodes);
     }
-    //printf("Somma percorsi minimi e: %llu\n", sum);
     return sum;
 }
 
@@ -249,6 +249,7 @@ void printRanking(Pointer *ranking, unsigned int k){
     }
 }
 
+//this function free the last remaining elements of the ranking
 void freeMem(Pointer *ranking){
     Pointer punt;
     while(*ranking!=NULL){
