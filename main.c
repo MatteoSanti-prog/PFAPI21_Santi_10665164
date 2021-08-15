@@ -134,7 +134,6 @@ void insertInOrder(Pointer *ranking, unsigned int order, unsigned int path, unsi
 
 
 //this function returns the node with minimum distance which is the first of the list.
-
 void deleteElement(PointerNode *listOfNodes){
     if(*listOfNodes!=NULL){
         Node *punt;
@@ -154,6 +153,7 @@ int emptyList(PointerNode *listOfNodes){
     }
 }
 
+//this function frees the specified node of the list
 void deleteNode(PointerNode *listOfNodes, unsigned int node){
     Node *punt;
     if(*listOfNodes!=NULL){
@@ -168,6 +168,7 @@ void deleteNode(PointerNode *listOfNodes, unsigned int node){
     }
 }
 
+//this function updates the list of nodes which is sorted by minimum path from node 0
 void updateDistance(PointerNode *listOfNodes, unsigned int node, unsigned int newDistance){
     Node *punt, *currentPunt, *prevPunt;
     prevPunt=NULL;
@@ -249,7 +250,7 @@ void printRanking(Pointer *ranking, unsigned int k){
     }
 }
 
-//this function free the last remaining elements of the ranking
+//this function frees the last remaining elements of the ranking
 void freeMem(Pointer *ranking){
     Pointer punt;
     while(*ranking!=NULL){
