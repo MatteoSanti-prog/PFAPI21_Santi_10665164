@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 #define INF -1
 #define CONST 3000
 //structure of a graph
@@ -22,6 +23,14 @@ typedef struct{
 //pointer to an element of the nodeList
 typedef Node *PointerNode;
 
+unsigned int conversion(const char string[]){
+    unsigned int temp=0;
+    for(int i=0;string[i]!='\0';i++){
+        temp=temp*10+string[i]-'0';
+    }
+    return temp;
+}
+
 unsigned int parseInt(unsigned int matrix[], const char string[], unsigned int count1, unsigned int d){
     unsigned int allZero=0;
     char temp[10];
@@ -31,7 +40,7 @@ unsigned int parseInt(unsigned int matrix[], const char string[], unsigned int c
     for(counter=0;string[counter]!='\0';counter++){
         if(string[counter]==',' || string[counter]=='\n'){
             temp[i]='\0';
-            matrix[(count1*d)+element]=atoi(temp);
+            matrix[(count1*d)+element]=conversion(temp);
             if(count1==0 && element!=0 && matrix[(count1*d)+element]==0){
                 allZero++;
             }
