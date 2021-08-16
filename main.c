@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #define INF -1
-#define CONST 3000
+#define CONST 2600
 //structure of a graph
 typedef struct {
     unsigned int order;//it represents the number of 'arrival' of the graph
